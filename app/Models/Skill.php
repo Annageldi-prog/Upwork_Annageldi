@@ -9,6 +9,8 @@ class Skill extends Model
 {
     protected $guarded = ['id'];
 
+    protected $fillable = ['name'];
+
     public $timestamps = false;
 
     public function freelancerSkills(): BelongsToMany

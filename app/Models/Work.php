@@ -12,6 +12,8 @@ class Work extends Model
 {
     use HasFactory;
 
+    protected $fillable = ['title', 'description', 'client_id'];
+
     protected $guarded = [
         'id',
         'created_at',
@@ -26,6 +28,7 @@ class Work extends Model
             'updated_at' => 'datetime',
         ];
     }
+
 
     public function client(): BelongsTo
     {

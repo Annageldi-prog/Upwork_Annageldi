@@ -38,6 +38,9 @@ class Client extends Authenticatable
         ];
     }
 
+
+    protected $fillable = ['name', 'email'];
+
     public function location(): BelongsTo
     {
         return $this->belongsTo(Location::class);

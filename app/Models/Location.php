@@ -9,6 +9,8 @@ class Location extends Model
 {
     protected $guarded = ['id'];
 
+    protected $fillable = ['name'];
+
     public $timestamps = false;
 
     public function freelancers(): HasMany

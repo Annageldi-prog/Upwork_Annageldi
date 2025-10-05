@@ -52,6 +52,7 @@ class AuthController extends Controller
 
         return response()->json([
             'status' => 1,
+            'message' => 'Successfully logouted',
         ], Response::HTTP_OK);
     }
 }
