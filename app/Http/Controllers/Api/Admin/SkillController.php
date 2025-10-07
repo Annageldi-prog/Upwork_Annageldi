@@ -12,11 +12,18 @@ class SkillController extends Controller
 {
     public function index()
     {
-        $objs = Skill::all()->get();
+        $skills = Skill::orderBy('name')
+            ->get()
+            ->transform(function ($obj) {
+                return [
+                    'id' => $obj->id,
+                    'name' => $obj->name,
+                ];
+            });
 
         return response()->json([
             'status' => 1,
-            'data' => $objs,
-        ], Response::HTTP_OK);
+            'data' => $skills,
+        ], Responce::HTTP_OK);
     }
 }

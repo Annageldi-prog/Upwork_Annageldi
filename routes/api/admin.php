@@ -8,19 +8,6 @@ use App\Http\Controllers\Api\Admin\LocationController;
 use App\Http\Controllers\Api\Admin\SkillController;
 
 
-//Route::prefix('admin')->middleware(['auth:sanctum', 'role:admin'])->group(function () {
-//    Route::get('/users', [UserController::class, 'index']);
-//    Route::get('/users', [UserController::class, 'index']);
-//    Route::post('/users', [UserController::class, 'store']);
-//    Route::put('/users/{id}', [UserController::class, 'update']);
-//    Route::delete('/users/{id}', [UserController::class, 'destroy']);
-//
-//
-   //Route::get('/locations', [LocationController::class, 'index']);
-//
-//
-//    Route::get('/skills', [SkillController::class, 'index']);
-//});
 
 
 Route::prefix('v1/admin')
@@ -40,26 +27,45 @@ Route::prefix('v1/admin')
                         Route::get('dashboard', 'index');
                     });
 
-                Route::controller(DashboardController::class)
-                    ->prefix('works')
-                    ->name('works.')
+                Route::controller(UserController::class)
+                    ->prefix('users')
                     ->group(function () {
                         Route::get('', 'index');
+                        Route::post('', 'store');
+                        Route::post('{id}', 'update')->where(['id' => '[0-9]+']);
+                        Route::delete('{id}', 'destroy')->where(['id' => '[0-9]+']);
                     });
 
-                Route::controller(DashboardController::class)
+                Route::controller(LocationController::class)
                     ->prefix('locations')
-                    ->name('locations.')
                     ->group(function () {
                         Route::get('', 'index');
                     });
 
-                Route::controller(DashboardController::class)
+
+                Route::controller(SkillController::class)
                     ->prefix('skills')
-                    ->name('skills.')
                     ->group(function () {
                         Route::get('', 'index');
                     });
+
+
+                Route::controller(ClientController::class)
+                    ->prefix('clients')
+                    ->group(function () {
+                        Route::get('', 'index');
+                        Route::post('', 'store');
+                        Route::post('{id}', 'update')->where(['id' => '[0-9]+']);
+                        Route::delete('{id}', 'destroy')->where(['id' => '[0-9]+']);
+                    });
+
+                Route::controller(WorkController::class)
+                    ->prefix('works')
+                    ->group(function () {
+                        Route::get('', 'index');
+                    });
+
+
             });
     });
 

@@ -6,58 +6,107 @@ use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
-
+use Illuminate\Support\Facades\Validator;
 
 class UserController extends Controller
 {
     public function index()
     {
-        return User::all();
+        $users = User::get();
+        return response()->json($users);
     }
 
     public function store(Request $request)
     {
-        $data = $request->validate([
+        $validator = Validator::make([
+            'name'     => $request->get('name'),
+            'username' => $request->get('username'),
+            'password' => $request->get('password'),
+        ], [
             'name'     => 'required|string|max:255',
-            'email'    => 'required|email|unique:users',
+            'username' => 'required|string|max:255|unique:users,username',
             'password' => 'required|string|min:6',
-            'role'     => 'required|in:admin,client,freelancer',
         ]);
 
-        $data['password'] = Hash::make($data['password']);
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()], 422);
+        }
 
-        $user = User::create($data);
+        $user = User::create([
+            'name'     => $request->get('name'),
+            'username' => $request->get('username'),
+            'password' => Hash::make($request->get('password')),
+        ]);
 
-        return response()->json($user, 201);
+        return response()->json([
+            'message' => 'Ulanyjy üstünlikli döredildi',
+            'user'    => $user
+        ], 201);
     }
 
     public function update(Request $request, $id)
     {
-        $user = User::findOrFail($id);
+        $user = User::find($id);
 
-        $data = $request->validate([
-            'name'     => 'sometimes|string|max:255',
-            'email'    => 'sometimes|email|unique:users,email,' . $user->id,
-            'password' => 'sometimes|string|min:6',
-            'role'     => 'sometimes|in:admin,client,freelancer',
-        ]);
-
-        if (isset($data['password'])) {
-            $data['password'] = Hash::make($data['password']);
+        if (!$user) {
+            return response()->json(['message' => 'Ulanyjy tapylmady'], 404);
         }
 
-        $user->update($data);
+        $validator = Validator::make([
+            'name'     => $request->get('name'),
+            'username' => $request->get('username'),
+            'password' => $request->get('password'),
+        ], [
+            'name'     => 'sometimes|string|max:255',
+            'username' => 'sometimes|string|max:255|unique:users,username,' . $id,
+            'password' => 'sometimes|string|min:6',
+        ]);
 
-        return response()->json($user);
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()], 422);
+        }
+
+        if ($request->get('name')) {
+            $user->name = $request->get('name');
+        }
+
+        if ($request->get('username')) {
+            $user->username = $request->get('username');
+        }
+
+        if ($request->get('password')) {
+            $user->password = Hash::make($request->get('password'));
+        }
+
+        $user->save();
+
+        return response()->json([
+            'message' => 'Ulanyjy täzelendi',
+            'user' => $user
+        ]);
     }
 
     public function destroy($id)
     {
-        User::findOrFail($id)->delete();
+        $obj = User::withCount('responses')
+            ->findOrFail($id);
 
-        return response()->json(null, 204);
+        if ($obj->user_count > 0) {
+            return response()->json([
+                'status' => 1,
+                'message' => 'Ulanyjy tapylmady',
+            ], Response::HTTP_OK);
+        }
+
+        $obj->delete();
+
+        return response()->json([
+            'status' => 1,
+            'message' => 'Ulanyjy pozuldy',
+        ], Response::HTTP_OK);
     }
-
-
 }
+
+
+
 
