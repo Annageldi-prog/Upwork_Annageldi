@@ -17,12 +17,15 @@ class ClientFactory extends Factory
      */
     protected static ?string $password;
 
+
     /**
      * Define the model's default state.
      *
      * @return array<string, mixed>
      */
     public function definition(): array
+
+
     {
         $location = fake()->boolean(90) ? Location::inRandomOrder()->first() : null;
 
