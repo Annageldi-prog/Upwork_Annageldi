@@ -4,15 +4,14 @@ namespace App\Http\Controllers\Api\Admin;
 
 
 use App\Http\Controllers\Controller;
-use App\Models\Location;
-use App\Models\Skill;
+use App\Models\Work;
+use Symfony\Component\HttpFoundation\Response;
 
-
-class SkillController extends Controller
+class WorkController extends Controller
 {
     public function index()
     {
-        $objs = Skill::all()->get();
+        $objs = Work::all()->get();
 
         return response()->json([
             'status' => 1,

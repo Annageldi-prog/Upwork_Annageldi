@@ -11,6 +11,11 @@ class LocationController extends Controller
 
     public function index()
     {
-        return Location::all();
+        $objs = Location::all()->get();
+
+        return response()->json([
+            'status' => 1,
+            'data' => $objs,
+        ], Response::HTTP_OK);
     }
 }
