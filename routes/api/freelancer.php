@@ -1,9 +1,9 @@
 <?php
-
+use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\Freelancer\AuthController;
 use App\Http\Controllers\Api\Freelancer\DashboardController;
 use App\Http\Controllers\Api\Freelancer\VerificationController;
-use Illuminate\Support\Facades\Route;
+
 
 Route::prefix('v1/freelancer')
     ->group(function () {

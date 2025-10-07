@@ -3,25 +3,28 @@
 namespace App\Http\Controllers\Api\Admin;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
 use App\Models\User;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
+
 
 class UserController extends Controller
 {
     public function index()
     {
-        return response()->json(User::all());
+        return User::all();
     }
 
     public function store(Request $request)
     {
         $data = $request->validate([
             'name'     => 'required|string|max:255',
-            'email'    => 'required|email|unique:users,email',
+            'email'    => 'required|email|unique:users',
             'password' => 'required|string|min:6',
+            'role'     => 'required|in:admin,client,freelancer',
         ]);
 
-        $data['password'] = bcrypt($data['password']);
+        $data['password'] = Hash::make($data['password']);
 
         $user = User::create($data);
 
@@ -34,14 +37,13 @@ class UserController extends Controller
 
         $data = $request->validate([
             'name'     => 'sometimes|string|max:255',
-            'email'    => 'sometimes|email|unique:users,email,' . $id,
-            'password' => 'nullable|string|min:6',
+            'email'    => 'sometimes|email|unique:users,email,' . $user->id,
+            'password' => 'sometimes|string|min:6',
+            'role'     => 'sometimes|in:admin,client,freelancer',
         ]);
 
-        if (!empty($data['password'])) {
-            $data['password'] = bcrypt($data['password']);
-        } else {
-            unset($data['password']);
+        if (isset($data['password'])) {
+            $data['password'] = Hash::make($data['password']);
         }
 
         $user->update($data);
@@ -51,10 +53,11 @@ class UserController extends Controller
 
     public function destroy($id)
     {
-        $user = User::findOrFail($id);
-        $user->delete();
+        User::findOrFail($id)->delete();
 
         return response()->json(null, 204);
     }
+
+
 }
 
