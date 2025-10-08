@@ -2,11 +2,10 @@
 
 namespace App\Http\Controllers\Api\Admin;
 
-
+use Illuminate\Http\Response;
 use App\Http\Controllers\Controller;
-use App\Models\Skill;
 use App\Models\Work;
-use Symfony\Component\HttpFoundation\Response;
+
 
 class WorkController extends Controller
 {
@@ -23,7 +22,7 @@ class WorkController extends Controller
 
         return response()->json([
             'status' => 1,
-            'data' => $skills,
-        ], Responce::HTTP_OK);
+            'data' => $works,
+        ], Response::HTTP_OK);
     }
 }

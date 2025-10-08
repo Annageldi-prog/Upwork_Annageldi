@@ -39,7 +39,7 @@ class Client extends Authenticatable
     }
 
 
-    protected $fillable = ['name', 'email'];
+    protected $fillable = ['name', 'username', 'first_name', 'last_name', 'password',];
 
     public function location(): BelongsTo
     {

@@ -6,6 +6,8 @@ use App\Http\Controllers\Api\Admin\AuthController;
 use App\Http\Controllers\Api\Admin\UserController;
 use App\Http\Controllers\Api\Admin\LocationController;
 use App\Http\Controllers\Api\Admin\SkillController;
+use App\Http\Controllers\Api\Admin\ClientController;
+use App\Http\Controllers\Api\Admin\WorkController;
 
 
 
@@ -28,7 +30,7 @@ Route::prefix('v1/admin')
                     });
 
                 Route::controller(UserController::class)
-                    ->prefix('users')
+                    ->prefix('user')
                     ->group(function () {
                         Route::get('', 'index');
                         Route::post('', 'store');

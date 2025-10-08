@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Api\Admin;
 
 
 use App\Http\Controllers\Controller;
-use App\Models\Location;
+use Illuminate\Http\Response;
 use App\Models\Skill;
 
 
@@ -24,6 +24,6 @@ class SkillController extends Controller
         return response()->json([
             'status' => 1,
             'data' => $skills,
-        ], Responce::HTTP_OK);
+        ], Response::HTTP_OK);
     }
 }

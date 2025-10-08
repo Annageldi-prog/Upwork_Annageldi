@@ -4,8 +4,6 @@ namespace App\Http\Controllers\Api\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Client;
-use App\Models\User;
-use App\Models\Work;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Http\Request;
@@ -16,8 +14,19 @@ class ClientController extends Controller
 {
     public function index()
     {
-        $clients = Client::get();
-        return response()->json($clients);
+        $clients = Client::orderBy('name')
+            ->get()
+            ->transform(function ($obj) {
+                return [
+                    'id' => $obj->id,
+                    'name' => $obj->name,
+                ];
+            });
+
+        return response()->json([
+            'status' => 1,
+            'data' => $clients,
+        ], Responce::HTTP_OK);
     }
 
     public function store(Request $request)

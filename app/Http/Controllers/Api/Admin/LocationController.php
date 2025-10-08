@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Location;
+use Illuminate\Http\Response;
 
 
 class LocationController extends Controller
@@ -23,6 +24,6 @@ class LocationController extends Controller
        return response()->json([
            'status' => 1,
            'data' => $locations,
-       ], Responce::HTTP_OK);
+       ], Response::HTTP_OK);
     }
 }

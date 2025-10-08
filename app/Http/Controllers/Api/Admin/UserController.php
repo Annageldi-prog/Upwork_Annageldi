@@ -3,8 +3,10 @@
 namespace App\Http\Controllers\Api\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Client;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 
@@ -12,24 +14,34 @@ class UserController extends Controller
 {
     public function index()
     {
-        $users = User::get();
-        return response()->json($users);
+        $users = User::orderBy('name')
+            ->get()
+            ->transform(function ($obj) {
+                return [
+                    'id' => $obj->id,
+                    'name' => $obj->name,
+                ];
+            });
+
+        return response()->json([
+            'status' => 1,
+            'data' => $users,
+        ], Response::HTTP_OK);
     }
 
     public function store(Request $request)
     {
-        $validator = Validator::make([
-            'name'     => $request->get('name'),
-            'username' => $request->get('username'),
-            'password' => $request->get('password'),
-        ], [
-            'name'     => 'required|string|max:255',
-            'username' => 'required|string|max:255|unique:users,username',
-            'password' => 'required|string|min:6',
+        $validator = Validator::make($request->all(), [
+            'name'     => ['required', 'string', 'max:255'],
+            'username' => ['required', 'string', 'max:255'],
+            'password' => ['required', 'string', 'min:6'],
         ]);
 
         if ($validator->fails()) {
-            return response()->json(['errors' => $validator->errors()], 422);
+            return response()->json([
+                'status' => 0,
+                'message' => $validator->errors(),
+            ],   Response::HTTP_UNPROCESSABLE_ENTITY);
         }
 
         $user = User::create([
@@ -46,44 +58,18 @@ class UserController extends Controller
 
     public function update(Request $request, $id)
     {
-        $user = User::find($id);
-
-        if (!$user) {
-            return response()->json(['message' => 'Ulanyjy tapylmady'], 404);
-        }
-
-        $validator = Validator::make([
-            'name'     => $request->get('name'),
-            'username' => $request->get('username'),
-            'password' => $request->get('password'),
-        ], [
-            'name'     => 'sometimes|string|max:255',
-            'username' => 'sometimes|string|max:255|unique:users,username,' . $id,
-            'password' => 'sometimes|string|min:6',
+        $validator = Validator::make($request->all(), [
+            'name'     => ['required', 'string', 'max:255'],
+            'username' => ['required', 'string', 'max:255'],
+            'password' => ['required', 'string', 'min:6'],
         ]);
 
         if ($validator->fails()) {
-            return response()->json(['errors' => $validator->errors()], 422);
+            return response()->json([
+                'status' => 0,
+                'message' => $validator->errors()
+            ], Response::HTTP_UNPROCESSABLE_ENTITY);
         }
-
-        if ($request->get('name')) {
-            $user->name = $request->get('name');
-        }
-
-        if ($request->get('username')) {
-            $user->username = $request->get('username');
-        }
-
-        if ($request->get('password')) {
-            $user->password = Hash::make($request->get('password'));
-        }
-
-        $user->save();
-
-        return response()->json([
-            'message' => 'Ulanyjy täzelendi',
-            'user' => $user
-        ]);
     }
 
     public function destroy($id)
